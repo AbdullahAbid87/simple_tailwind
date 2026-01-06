@@ -97,11 +97,15 @@
 
         const data = new FormData(form);
 
+        const randomImage = `https://i.pravatar.cc/300?img=${Math.floor(
+          Math.random() * 70
+        )}`;
+
         container.append(
           createCard({
             name: data.get("name"),
             profession: data.get("profession"),
-            image: data.get("image") || "https://i.pravatar.cc/300",
+            image: data.get("image") || randomImage,
           })
         );
 
