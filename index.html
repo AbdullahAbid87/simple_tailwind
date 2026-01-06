@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="bg-gray-100 p-10">
+    <!-- Form -->
+    <form
+      id="card-form"
+      class="mb-8 max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+    >
+      <h2 class="mb-4 text-lg font-semibold text-gray-900">Add a new User</h2>
+
+      <div class="mb-4">
+        <label class="mb-1 block text-sm font-medium text-gray-700">
+          name
+        </label>
+        <input
+          type="text"
+          name="name"
+          required
+          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-black focus:outline-none"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label class="mb-1 block text-sm font-medium text-gray-700">
+          Profession
+        </label>
+        <input
+          name="profession"
+          required
+          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-black focus:outline-none"
+        />
+      </div>
+
+      <div class="mb-4">
+        <label class="mb-1 block text-sm font-medium text-gray-700">
+          Image URL (optional)
+        </label>
+        <input
+          type="url"
+          name="image"
+          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-black focus:outline-none"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="rounded-lg bg-black px-4 py-2 text-sm text-white hover:bg-gray-800"
+      >
+        Add Card
+      </button>
+    </form>
+
+    <!-- Cards GRID -->
+    <div
+      id="cards"
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+    ></div>
+
+    <!-- JAVASCRIPT -->
+    <script type="module">
+      const container = document.getElementById("cards");
+      const form = document.getElementById("card-form");
+
+      //  Function to load Template into DOM
+      const loadTemplate = async () => {
+        const res = await fetch("/card-template.html");
+        const html = await res.text();
+        document.body.insertAdjacentHTML("beforeend", html);
+      };
+
+      await loadTemplate();
+
+      const template = document.getElementById("card-template");
+
+      const createCard = ({ name, profession, image }) => {
+        const card = template.content.cloneNode(true);
+
+        card.querySelector(".card-name").textContent = name;
+        card.querySelector(".card-profession").textContent = profession;
+
+        const img = card.querySelector(".card-image");
+        if (image) {
+          img.src = image;
+          img.classList.remove("hidden");
+        }
+
+        return card;
+      };
+
+      // Handle form submit
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const data = new FormData(form);
+
+        container.append(
+          createCard({
+            name: data.get("name"),
+            profession: data.get("profession"),
+            image: data.get("image") || "https://i.pravatar.cc/300",
+          })
+        );
+
+        form.reset();
+      });
+    </script>
+  </body>
+</html>
